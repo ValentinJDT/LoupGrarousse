@@ -1,8 +1,8 @@
-package fr.rmcoq.game;
+package fr.mrcoq.game;
 
-import fr.rmcoq.LoupGarousse;
-import fr.rmcoq.game.player.WWPlayer;
-import fr.rmcoq.game.player.role.Role;
+import fr.mrcoq.LoupGarousse;
+import fr.mrcoq.game.player.WWPlayer;
+import fr.mrcoq.game.player.role.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

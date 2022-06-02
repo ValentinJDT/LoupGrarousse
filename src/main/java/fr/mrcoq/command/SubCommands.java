@@ -1,9 +1,8 @@
-package fr.rmcoq.command;
+package fr.mrcoq.command;
 
-import fr.rmcoq.LoupGarousse;
+import fr.mrcoq.LoupGarousse;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 public enum SubCommands {

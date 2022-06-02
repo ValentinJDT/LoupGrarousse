@@ -1,8 +1,8 @@
-package fr.rmcoq;
+package fr.mrcoq;
 
-import fr.rmcoq.command.WWCommand;
-import fr.rmcoq.command.WWTabCompleter;
-import fr.rmcoq.game.Game;
+import fr.mrcoq.command.WWCommand;
+import fr.mrcoq.command.WWTabCompleter;
+import fr.mrcoq.game.Game;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class LoupGarousse extends JavaPlugin {

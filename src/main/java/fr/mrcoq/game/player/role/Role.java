@@ -1,4 +1,4 @@
-package fr.rmcoq.game.player.role;
+package fr.mrcoq.game.player.role;
 
 public enum Role {
     VILLAGER("Villageois", 0, 0, "§7Yu gi oh, à toi de jouer "),

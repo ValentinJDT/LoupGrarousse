@@ -1,6 +1,5 @@
-package fr.rmcoq.command;
+package fr.mrcoq.command;
 
-import fr.rmcoq.LoupGarousse;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

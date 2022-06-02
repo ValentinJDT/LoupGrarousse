@@ -1,6 +1,5 @@
-package fr.rmcoq.command;
+package fr.mrcoq.command;
 
-import com.google.common.collect.Lists;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

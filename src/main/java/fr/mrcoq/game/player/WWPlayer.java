@@ -1,6 +1,6 @@
-package fr.rmcoq.game.player;
+package fr.mrcoq.game.player;
 
-import fr.rmcoq.game.player.role.Role;
+import fr.mrcoq.game.player.role.Role;
 import org.bukkit.entity.Player;
 
 public class WWPlayer {
