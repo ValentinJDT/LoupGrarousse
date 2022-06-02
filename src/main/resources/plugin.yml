@@ -1,0 +1,10 @@
+name: LoupGarousse
+version: '${project.version}'
+main: fr.rmcoq.LoupGarousse
+api-version: 1.18
+authors: [ MrCoq ]
+description: Werewolf plugin for BarbeRousse
+
+commands:
+  lg:
+    description: LoupGarousse command
