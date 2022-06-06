@@ -3,13 +3,13 @@ package fr.mrcoq.game;
 import fr.mrcoq.LoupGarousse;
 import fr.mrcoq.game.player.WWPlayer;
 import fr.mrcoq.game.player.role.Role;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game {
@@ -18,6 +18,7 @@ public class Game {
     private boolean night = false;
 
     private List<WWPlayer> wwPlayers = new ArrayList<>();
+    private Map<Player, WWPlayer> selectedWWPlayers = new HashMap<>();
     private List<WWPlayer> deadPlayers = new ArrayList<>();
 
     private Role actualRole = Role.VILLAGER;
@@ -25,49 +26,76 @@ public class Game {
     private int day = 0;
     private int minPlayers = 5;
     private int maxPlayers = 12;
+    private int seconds = 12;
 
     public Game() {
 
     }
 
     public void start() {
-        if(started) {
+        if (started) {
             return;
         }
 
         this.day = 0;
         this.started = true;
 
-        while(started) {
-            if(this.getRoles().size() < 2) {
+        while (started) {
+            if (this.getRoles().size() < 2) {
                 this.started = false;
                 continue;
             }
 
-            for(Role role : this.getRoles()) {
+            for (Role role : this.getRoles()) {
                 this.actualRole = role;
-                if(role == Role.VILLAGER) {
+                if (role == Role.VILLAGER) {
                     this.setCycle(false);
                     this.broadcastMessage("§7Il est l'heure de se réveiller");
-                } else if(!this.night) {
+                } else if (!this.night) {
                     setCycle(true);
                     this.broadcastMessage("§7Il est l'heure de se coucher");
                 }
 
-                Bukkit.getScheduler().scheduleSyncRepeatingTask(LoupGarousse.getInstance(), () -> {
-                    List<WWPlayer> actualWWPlayers = getPlayersByRole(role);
+                List<WWPlayer> actualWWPlayers = getPlayersByRole(role);
+
+                seconds = 0;
+                selectedWWPlayers.clear();
+                new RunnableStart(role, actualWWPlayers).runTaskTimer(LoupGarousse.getInstance(), 0, 20L);
 
 
-                }, 0, 20L * role.getTimePlay());
+                /*Bukkit.getScheduler().scheduleSyncRepeatingTask(LoupGarousse.getInstance(), () -> {
+                }, 0, 20L);*/
             }
         }
 
 
     }
 
+    public class RunnableStart extends BukkitRunnable {
+
+        private Role role;
+        List<WWPlayer> actualWWPlayers;
+
+        public RunnableStart(Role role, List<WWPlayer> actualWWPlayers) {
+            this.actualWWPlayers = actualWWPlayers;
+            this.role = role;
+        }
+
+        @Override
+        public void run() {
+            if (role.getTimePlay() < seconds) {
+                this.cancel();
+                return;
+            }
+
+            broadcastActionBarMessage(role.getDisplayName() + " | " + (role.getTimePlay() - seconds));
+            seconds++;
+        }
+    }
+
     public boolean kill(Player player) {
 
-        if(!this.started) {
+        if (!this.started) {
             return false;
         }
 
@@ -84,7 +112,7 @@ public class Game {
     public boolean join(Player player) {
         boolean canJoin = wwPlayers.stream().noneMatch(wwPlayer -> wwPlayer.getPlayer().getName().equals(player.getName()));
 
-        if(canJoin) {
+        if (canJoin) {
             wwPlayers.add(new WWPlayer(player));
         }
 
@@ -111,6 +139,14 @@ public class Game {
         this.day = day;
     }
 
+    public boolean wwPlayerExist(Player player) {
+        return wwPlayers.stream().anyMatch(wwPlayer -> player.getName().equals(wwPlayer.getPlayer().getName()));
+    }
+
+    public boolean wwPlayerExist(String playerName) {
+        return wwPlayers.stream().anyMatch(wwPlayer -> playerName.equals(wwPlayer.getPlayer().getName()));
+    }
+
     public WWPlayer getWWPlayer(Player player) {
         return wwPlayers.stream().filter(wwPlayer -> player.getName().equals(wwPlayer.getPlayer().getName())).findFirst().orElse(null);
     }
@@ -124,15 +160,32 @@ public class Game {
     }
 
     public List<Role> getRoles() {
-        return wwPlayers.stream().map(WWPlayer::getRole).sorted(Comparator.comparingInt(Role::getOrder)).distinct().toList();
+        return wwPlayers.stream().map(WWPlayer::getRole).sorted(Comparator.comparingInt(Role::getOrder)).distinct().collect(Collectors.toList());
     }
 
     public List<WWPlayer> getWwPlayers() {
         return wwPlayers;
     }
 
+    public Map<Player, WWPlayer> getSelectedWWPlayers() {
+        return selectedWWPlayers;
+    }
+
+    public void setSelectedWWPlayers(Map<Player, WWPlayer> selectedWWPlayers) {
+        this.selectedWWPlayers = selectedWWPlayers;
+    }
+
+    public void select(Player player, Player target) {
+        WWPlayer wwPlayer = getWWPlayer(target);
+        selectedWWPlayers.put(player, wwPlayer);
+    }
+
     public void broadcastMessage(String message) {
         getWwPlayers().forEach(wwPlayer -> wwPlayer.getPlayer().sendMessage(message));
+    }
+
+    public void broadcastActionBarMessage(String message) {
+        getWwPlayers().forEach(wwPlayer -> wwPlayer.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message)));
     }
 
     public int getMinPlayers() {
