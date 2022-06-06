@@ -23,7 +23,6 @@ public class WWTabCompleter implements TabCompleter {
             subCommand.ifPresent(subCommands -> sub.add(subCommands.getArgs()[args.length-1]));
         }
 
-
         return sub;
     }
 }
